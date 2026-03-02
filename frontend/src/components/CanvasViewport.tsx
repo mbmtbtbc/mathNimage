@@ -1,11 +1,22 @@
+import { useEffect, useRef } from "react";
+import { Renderer } from "../engines/renderer/Renderer";
+
 export default function CanvasViewport() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const renderer = new Renderer();
+    renderer.init(ref.current);
+  }, []);
+
   return (
     <div
-      id="canvas-root"
+      ref={ref}
       style={{
         position: "absolute",
         inset: 0,
-        background: "#000",
         zIndex: 0,
       }}
     />
