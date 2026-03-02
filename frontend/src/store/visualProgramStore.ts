@@ -40,7 +40,7 @@ p.parameters = parameters;
     parameters
   );
 
-  Renderer.updateEquation(glsl, p.parameters);
+  Renderer.updateEquation(glsl, p.parameters, p.style.name);
   Renderer.updateParameters(p.parameters);
 },
 }));

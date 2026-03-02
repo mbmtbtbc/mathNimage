@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useVisualProgramStore } from "../store/visualProgramStore";
+import { Renderer } from "../engines/renderer/Renderer";
 
 export default function Playground() {
   const setProgram = useVisualProgramStore((s) => s.setProgram);
@@ -84,6 +85,30 @@ export default function Playground() {
       </div>
     )
   )}
+
+  <select
+  onChange={(e) =>
+    program &&
+    setProgram({
+      ...program,
+      style: { name: e.target.value },
+    })
+  }
+>
+  <option value="default">Default</option>
+  <option value="neon">Neon</option>
+  <option value="terrain">Terrain</option>
+  <option value="contour">Contour</option>
+</select>
+
+<select
+  onChange={(e) => Renderer.setPostFX(e.target.value)}
+>
+  <option value="none">None</option>
+  <option value="bloom">Bloom</option>
+  <option value="sketch">Sketch</option>
+  <option value="watercolor">Watercolor</option>
+</select>
 
       <p style={{ opacity: 0.7 }}>
         Variables: x, y, t
