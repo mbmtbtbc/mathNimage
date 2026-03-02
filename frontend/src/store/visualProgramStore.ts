@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { Renderer } from "../engines/renderer/Renderer";
+import { equationToGLSL, validateEquation } from "../math/equationToGLSL";
 import type { VisualProgram } from "@shared/types/VisualProgram";
+
 
 type Store = {
   program: VisualProgram | null;
@@ -11,9 +13,14 @@ export const useVisualProgramStore = create<Store>((set) => ({
   program: null,
 
   setProgram: (p) => {
-    set({ program: p });
+  set({ program: p });
 
-    // ⭐ GPU bridge
-    Renderer.updateEquation(p.equation.expression);
-  },
+  if (!validateEquation(p.equation.expression)) {
+    console.warn("Invalid equation");
+    return;
+  }
+
+  const glsl = equationToGLSL(p.equation.expression);
+  Renderer.updateEquation(glsl);
+},
 }));

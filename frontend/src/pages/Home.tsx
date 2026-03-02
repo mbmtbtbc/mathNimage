@@ -12,7 +12,7 @@ export default function Home() {
             id: "wave",
             mode: "equation",
             equation: {
-              expression: "sin(uv.x*20.0 + u_time)",
+              expression: "sin(x*20 + t)",
               variables: [],
             },
             parameters: {},
@@ -30,7 +30,7 @@ export default function Home() {
             mode: "equation",
             equation: {
               expression:
-                "sin(uv.x*10.0 + u_time)*cos(uv.y*10.0)",
+                "sin(x*10 + t)*cos(y*10)",
               variables: [],
             },
             parameters: {},
