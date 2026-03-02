@@ -6,9 +6,7 @@ export default function CanvasViewport() {
 
   useEffect(() => {
     if (!ref.current) return;
-
-    const renderer = new Renderer();
-    renderer.init(ref.current);
+    Renderer.init(ref.current);
   }, []);
 
   return (

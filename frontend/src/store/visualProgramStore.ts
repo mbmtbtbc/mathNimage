@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { Renderer } from "../engines/renderer/Renderer";
 import type { VisualProgram } from "@shared/types/VisualProgram";
 
 type Store = {
@@ -8,5 +9,11 @@ type Store = {
 
 export const useVisualProgramStore = create<Store>((set) => ({
   program: null,
-  setProgram: (p) => set({ program: p }),
+
+  setProgram: (p) => {
+    set({ program: p });
+
+    // ⭐ GPU bridge
+    Renderer.updateEquation(p.equation.expression);
+  },
 }));
