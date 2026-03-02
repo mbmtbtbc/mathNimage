@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import type { IUniform } from "three";
 
 class RendererEngine {
   private renderer!: THREE.WebGLRenderer;
@@ -95,15 +96,32 @@ class RendererEngine {
     this.renderer.render(this.scene, this.camera);
   };
 
-  updateEquation(equationGLSL: string) {
+  updateEquation(
+  equationGLSL: string,
+  params: Record<string, number> = {}
+) {
   if (!this.material) return;
 
-  // rebuild shader dynamically
+  /* ⭐ ensure uniforms exist BEFORE compiling */
+  Object.entries(params).forEach(([key, value]) => {
+    const uniformName = `u_${key}`;
+
+    if (!this.material.uniforms[uniformName]) {
+      this.material.uniforms[uniformName] = { value };
+    }
+  });
+
+  /* build parameter uniform declarations */
+  const paramUniforms = Object.keys(params)
+    .map((k) => `uniform float u_${k};`)
+    .join("\n");
+
   this.fragmentSource = `
     precision highp float;
 
     uniform float u_time;
     uniform vec2 u_resolution;
+    ${paramUniforms}
 
     float equation(vec2 uv){
       return ${equationGLSL};
@@ -116,13 +134,30 @@ class RendererEngine {
     }
   `;
 
-  // replace shader
   this.material.fragmentShader = this.fragmentSource;
-
-  // tell Three.js to recompile GPU program
   this.material.needsUpdate = true;
-  }
 }
+
+  updateParameters(params: Record<string, number>) {
+  if (!this.material) return;
+
+  const uniforms = this.material.uniforms as Record<
+    string,
+    IUniform<number>
+  >;
+
+  Object.entries(params).forEach(([key, value]) => {
+    const uniformName = `u_${key}`;
+
+    if (!uniforms[uniformName]) {
+      uniforms[uniformName] = { value: value };
+    } else {
+      uniforms[uniformName].value = value;
+    }
+  });
+}
+}
+
 
 /* ⭐ SINGLE GLOBAL INSTANCE */
 export const Renderer = new RendererEngine();

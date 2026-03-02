@@ -3,6 +3,7 @@ import { useVisualProgramStore } from "../store/visualProgramStore";
 
 export default function Playground() {
   const setProgram = useVisualProgramStore((s) => s.setProgram);
+  const program = useVisualProgramStore((s) => s.program);
 
   const [equation, setEquation] = useState("sin(x*10+t)");
   const [debouncedEquation, setDebouncedEquation] =
@@ -54,6 +55,35 @@ export default function Playground() {
           border: "1px solid #444",
         }}
       />
+
+      {program &&
+  Object.entries(program.parameters).map(
+    ([name, value]) => (
+      <div key={name}>
+        <label>{name}</label>
+        <input
+          type="range"
+          min="0"
+          max="10"
+          step="0.1"
+          value={value}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+
+            const updated = {
+              ...program.parameters,
+              [name]: v,
+            };
+
+            setProgram({
+              ...program,
+              parameters: updated,
+            });
+          }}
+        />
+      </div>
+    )
+  )}
 
       <p style={{ opacity: 0.7 }}>
         Variables: x, y, t
